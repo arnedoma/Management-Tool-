@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bewohner- & Therapie-Management - Haus Sonnenschein</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Bewohner- & Therapie-Management ☀️</h1>
+            <p>Haus Sonnenschein - Ganzheitliche Betreuung</p>
+        </div>
+
+        <div id="dashboardView" class="view">
+            <div class="card">
+                <h2>👤 Bewohnerübersicht</h2>
+                <div class="input-group search-bar">
+                    <label for="residentSearch">Bewohner suchen:</label>
+                    <input type="text" id="residentSearch" placeholder="Name oder Zimmernummer eingeben...">
+                </div>
+                <div class="btn-group">
+                    <button class="btn-add-resident" onclick="showResidentForm()">➕ Neuer Bewohner hinzufügen</button>
+                    <button class="btn-data-export" onclick="exportData()">⬇️ Alle Daten exportieren</button>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="importData(event)">
+                    <button class="btn-data-import" onclick="document.getElementById('fileInput').click()">⬆️ Alle Daten importieren</button>
+                </div>
+                <div id="residentList" class="resident-list">
+                    </div>
+            </div>
+        </div>
+
+        <div id="residentDetailView" class="view" style="display: none;">
+            <div class="card">
+                <button class="btn-back" onclick="showDashboard()">⬅️ Zurück zur Übersicht</button>
+                <h2 id="residentDetailName"></h2>
+
+                <div class="tab-navigation">
+                    <button class="tab-button active" onclick="openTab(event, 'basicData')">Basisdaten</button>
+                    <button class="tab-button" onclick="openTab(event, 'woundManagement')">Wundmanagement</button>
+                    <button class="tab-button" onclick="openTab(event, 'physiotherapy')">Physiotherapie</button>
+                    <button class="tab-button" onclick="openTab(event, 'occupationalTherapy')">Ergotherapie</button>
+                    <button class="tab-button" onclick="openTab(event, 'speechTherapy')">Logopädie</button>
+                </div>
+
+                <div id="basicData" class="tab-content active">
+                    <h3>Grundlegende Informationen</h3>
+                    <div class="two-column">
+                        <div class="input-group">
+                            <label for="detailName">Name:</label>
+                            <input type="text" id="detailName" placeholder="Name des Bewohners">
+                        </div>
+                        <div class="input-group">
+                            <label for="detailRoom">Zimmer Nr.:</label>
+                            <input type="text" id="detailRoom" placeholder="z.B. 101">
+                        </div>
+                    </div>
+                    <div class="two-column">
+                        <div class="input-group">
+                            <label for="detailAge">Alter (Jahre):</label>
+                            <input type="number" id="detailAge" min="18">
+                        </div>
+                        <div class="input-group">
+                            <label for="detailGender">Geschlecht:</label>
+                            <select id="detailGender">
+                                <option value="männlich">männlich</option>
+                                <option value="weiblich">weiblich</option>
+                                <option value="divers">divers</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="detailDiagnosis">Diagnosen:</label>
+                        <textarea id="detailDiagnosis" rows="3" placeholder="Wichtige Diagnosen, z.B. Diabetes Mellitus, Demenz"></textarea>
+                    </div>
+                     <div class="input-group">
+                        <label for="detailAllergies">Allergien / Unverträglichkeiten:</label>
+                        <textarea id="detailAllergies" rows="2" placeholder="z.B. Penicillin, Laktose"></textarea>
+                    </div>
+                     <div class="input-group">
+                        <label for="detailPreferences">Besondere Vorlieben:</label>
+                        <textarea id="detailPreferences" rows="3" placeholder="z.B. Musik, bestimmte Aktivitäten"></textarea>
+                    </div>
+                </div>
+
+                <div id="woundManagement" class="tab-content">
+                    <h3>Wunddokumentation</h3>
+                     <div class="two-column">
+                        <div class="input-group">
+                            <label for="woundLocation">Lokalisation:</label>
+                            <input type="text" id="woundLocation" placeholder="z.B. Sakrum, Ferse links">
+                        </div>
+                        <div class="input-group">
+                            <label for="woundType">Wundart:</label>
+                            <input type="text" id="woundType" placeholder="z.B. Dekubitus Grad II, Ulcus Cruris">
+                        </div>
+                    </div>
+                    <div class="three-column">
+                        <div class="input-group">
+                            <label for="woundLength">Länge (cm):</label>
+                            <input type="number" id="woundLength" step="0.1" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="woundWidth">Breite (cm):</label>
+                            <input type="number" id="woundWidth" step="0.1" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="woundDepth">Tiefe (cm):</label>
+                            <input type="number" id="woundDepth" step="0.1" min="0">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="woundBase">Wundgrund:</label>
+                        <select id="woundBase">
+                            <option value="">Wählen</option>
+                            <option value="Granulationsgewebe">Granulationsgewebe</option>
+                            <option value="Fibrin">Fibrin</option>
+                            <option value="Nekrose">Nekrose</option>
+                            <option value="Mischform">Mischform</option>
+                        </select>
+                    </div>
+                     <div class="input-group">
+                        <label for="woundExudate">Exsudat:</label>
+                        <select id="woundExudate">
+                            <option value="">Wählen</option>
+                            <option value="keine">Keine</option>
+                            <option value="wenig">Wenig</option>
+                            <option value="mäßig">Mäßig</option>
+                            <option value="viel">Viel</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="woundEdges">Wundränder/Umfeld:</label>
+                        <textarea id="woundEdges" rows="2" placeholder="z.B. Rötung, Mazeration, intakt"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="woundCarePlan">Aktueller Wundversorgungsplan:</label>
+                        <textarea id="woundCarePlan" rows="3" placeholder="z.B. Reinigung mit NaCl, Hydrokolloid-Verband, Verbandswechsel 2x/Woche"></textarea>
+                    </div>
+                    <button class="btn-add-entry" onclick="addWoundEntry()">➕ Wunddokumentation hinzufügen</button>
+
+                    <h4>Wundverlauf</h4>
+                    <table id="woundHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Lokalisation/Art</th>
+                                <th>Größe (LxBxT)</th>
+                                <th>Grund/Exsudat</th>
+                                <th>Maßnahmen</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+
+                <div id="physiotherapy" class="tab-content">
+                    <h3>Physiotherapieplan</h3>
+                    <div class="input-group">
+                        <label for="physioProblem">Hauptproblem/Defizit:</label>
+                        <textarea id="physioProblem" rows="2" placeholder="z.B. Gangunsicherheit, verminderte Kraft"></textarea>
+                    </div>
+                     <div class="input-group">
+                        <label for="physioGoals">Therapieziele:</label>
+                        <textarea id="physioGoals" rows="3" placeholder="z.B. Verbesserung der Mobilität, Reduktion von Schmerzen"></textarea>
+                    </div>
+                    <div class="two-column">
+                        <div class="input-group">
+                            <label for="physioFrequency">Frequenz:</label>
+                            <input type="text" id="physioFrequency" placeholder="z.B. 3x pro Woche">
+                        </div>
+                        <div class="input-group">
+                            <label for="physioDuration">Dauer (Minuten):</label>
+                            <input type="number" id="physioDuration" min="15">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="physioExercises">Übungen/Maßnahmen:</label>
+                        <textarea id="physioExercises" rows="4" placeholder="Konkrete Übungen, z.B. Gangtraining mit Rollator, Kraftübungen für Beine"></textarea>
+                    </div>
+                    <button class="btn-add-entry" onclick="addPhysioEntry()">➕ Physio-Eintrag hinzufügen</button>
+
+                    <h4>Physiotherapie-Verlauf</h4>
+                    <table id="physioHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Maßnahmen</th>
+                                <th>Fortschritt/Bemerkungen</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+
+                <div id="occupationalTherapy" class="tab-content">
+                    <h3>Ergotherapieplan</h3>
+                    <div class="input-group">
+                        <label for="ergoProblem">Hauptproblem/Defizit:</label>
+                        <textarea id="ergoProblem" rows="2" placeholder="z.B. Einschränkung der Feinmotorik, Schwierigkeiten bei ADL"></textarea>
+                    </div>
+                     <div class="input-group">
+                        <label for="ergoGoals">Therapieziele:</label>
+                        <textarea id="ergoGoals" rows="3" placeholder="z.B. Wiedererlangen der Selbstständigkeit beim Essen, Verbesserung der Handfunktion"></textarea>
+                    </div>
+                    <div class="two-column">
+                        <div class="input-group">
+                            <label for="ergoFrequency">Frequenz:</label>
+                            <input type="text" id="ergoFrequency" placeholder="z.B. 2x pro Woche">
+                        </div>
+                        <div class="input-group">
+                            <label for="ergoDuration">Dauer (Minuten):</label>
+                            <input type="number" id="ergoDuration" min="15">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="ergoExercises">Übungen/Maßnahmen:</label>
+                        <textarea id="ergoExercises" rows="4" placeholder="Konkrete Übungen, z.B. Anziehtraining, Knetübungen"></textarea>
+                    </div>
+                    <button class="btn-add-entry" onclick="addErgoEntry()">➕ Ergo-Eintrag hinzufügen</button>
+
+                    <h4>Ergotherapie-Verlauf</h4>
+                    <table id="ergoHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Maßnahmen</th>
+                                <th>Fortschritt/Bemerkungen</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+
+                <div id="speechTherapy" class="tab-content">
+                    <h3>Logopädieplan</h3>
+                    <div class="input-group">
+                        <label for="speechProblem">Hauptproblem/Defizit:</label>
+                        <textarea id="speechProblem" rows="2" placeholder="z.B. Dysphagie (Schluckstörung), Dysarthrie (Sprechstörung)"></textarea>
+                    </div>
+                     <div class="input-group">
+                        <label for="speechGoals">Therapieziele:</label>
+                        <textarea id="speechGoals" rows="3" placeholder="z.B. Sicheres Schlucken von passierter Kost, Verbesserung der Verständlichkeit"></textarea>
+                    </div>
+                    <div class="two-column">
+                        <div class="input-group">
+                            <label for="speechFrequency">Frequenz:</label>
+                            <input type="text" id="speechFrequency" placeholder="z.B. 2x pro Woche">
+                        </div>
+                        <div class="input-group">
+                            <label for="speechDuration">Dauer (Minuten):</label>
+                            <input type="number" id="speechDuration" min="15">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="speechExercises">Übungen/Maßnahmen:</label>
+                        <textarea id="speechExercises" rows="4" placeholder="Konkrete Übungen, z.B. Mundmotorikübungen, Sprechübungen"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="speechDietPlan">Anmerkungen zum Ernährungsplan (aus Logopädie-Sicht):</label>
+                        <textarea id="speechDietPlan" rows="4" placeholder="Hinweise zur Konsistenz, Flüssigkeitszufuhr, Essenszeiten (ggf. Verweis auf individuellen Ernährungsplan)"></textarea>
+                    </div>
+                    <button class="btn-add-entry" onclick="addSpeechEntry()">➕ Logo-Eintrag hinzufügen</button>
+
+                    <h4>Logopädie-Verlauf</h4>
+                    <table id="speechHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Maßnahmen</th>
+                                <th>Fortschritt/Bemerkungen</th>
+                                <th>Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="btn-group save-group">
+                    <button class="btn-save" onclick="saveResidentDetails()">💾 Änderungen speichern</button>
+                    <button class="btn-delete" onclick="deleteResident()">🗑️ Bewohner löschen</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="addResidentForm" class="view" style="display: none;">
+            <div class="card">
+                <h2>➕ Neuen Bewohner hinzufügen</h2>
+                <div class="two-column">
+                    <div class="input-group">
+                        <label for="newResidentName">Name:</label>
+                        <input type="text" id="newResidentName" placeholder="Max Mustermann" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="newResidentRoom">Zimmer Nr.:</label>
+                        <input type="text" id="newResidentRoom" placeholder="z.B. 101" required>
+                    </div>
+                </div>
+                <div class="two-column">
+                    <div class="input-group">
+                        <label for="newResidentAge">Alter (Jahre):</label>
+                        <input type="number" id="newResidentAge" min="18">
+                    </div>
+                    <div class="input-group">
+                        <label for="newResidentGender">Geschlecht:</label>
+                        <select id="newResidentGender">
+                            <option value="männlich">männlich</option>
+                            <option value="weiblich">weiblich</option>
+                            <option value="divers">divers</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn-save" onclick="addResident()">✅ Bewohner anlegen</button>
+                    <button class="btn-clear" onclick="showDashboard()">❌ Abbrechen</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Erstellt von:</strong> Arne Domachofski | <strong>Fachliche Qualifikation:</strong> Koch und Diättisch geschulter Koch</p>
+            <p><strong>Datum:</strong> 27. Juni 2025 | <strong>Nächste Überprüfung:</strong> Individuell anpassbar</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
